@@ -1,68 +1,68 @@
 app:
   version_check_url: "https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/version"
-  show_version_update: true # 控制显示版本更新提示，如果 false，则不接受新版本提示
+  show_version_update: true # Mengontrol tampilan notifikasi pembaruan versi. Jika false, tidak akan menerima notifikasi versi baru
 
 crawler:
-  request_interval: 1000 # 请求间隔(毫秒)
-  enable_crawler: true # 是否启用爬取新闻功能，如果 false，则直接停止程序
-  use_proxy: false # 是否启用代理，false 时为关闭
+  request_interval: 1000 # Interval permintaan (milidetik)
+  enable_crawler: true # Apakah akan mengaktifkan fungsi crawling berita. Jika false, program langsung berhenti
+  use_proxy: false # Apakah akan mengaktifkan proxy. Jika false, proxy dinonaktifkan
   default_proxy: "http://127.0.0.1:10086"
 
-# 🔸 daily（当日汇总模式）
-#   • 推送时机：按时推送(默认每小时推送一次)
-#   • 显示内容：当日所有匹配新闻 + 新增新闻区域
-#   • 适用场景：日报总结、全面了解当日热点趋势
+# 🔸 daily (Mode Ringkasan Harian)
+#   • Waktu Push: Tepat waktu (default sekali per jam)
+#   • Konten: Semua berita cocok hari ini + area berita baru
+#   • Skenario: Ringkasan harian, pemahaman menyeluruh tentang tren panas hari ini
 #
-# 🔸 current（当前榜单模式）
-#   • 推送时机：按时推送(默认每小时推送一次)
-#   • 显示内容：当前榜单匹配新闻 + 新增新闻区域
-#   • 适用场景：实时热点追踪、了解当前最火的内容
+# 🔸 current (Mode Daftar Saat Ini)
+#   • Waktu Push: Tepat waktu (default sekali per jam)
+#   • Konten: Berita cocok di daftar saat ini + area berita baru
+#   • Skenario: Pelacakan hot spot real-time, mengetahui konten terpopuler saat ini
 #
-# 🔸 incremental（增量监控模式）
-#   • 推送时机：有新增才推送
-#   • 显示内容：新出现的匹配频率词新闻
-#   • 适用场景：避免重复信息干扰
+# 🔸 incremental (Mode Pemantauan Inkremental)
+#   • Waktu Push: Hanya push jika ada item baru
+#   • Konten: Berita dengan kata kunci frekuensi cocok yang baru muncul
+#   • Skenario: Menghindari gangguan informasi berulang
 
-# 推送模式选择
+# Pilihan Mode Push
 report:
-  mode: "daily" # 可选: "daily"|"incremental"|"current"
-  rank_threshold: 5 # 排名高亮阈值
-  sort_by_position_first: false # 排序优先级：true=先按配置位置排序，false=先按热点条数排序
-  max_news_per_keyword: 0 # 每个关键词最大显示数量，0=不限制
+  mode: "daily" # Pilihan: "daily"|"incremental"|"current"
+  rank_threshold: 5 # Ambang batas highlight peringkat
+  sort_by_position_first: false # Prioritas Pengurutan: true=urutkan berdasarkan posisi konfigurasi dulu, false=urutkan berdasarkan jumlah hot spot dulu
+  max_news_per_keyword: 0 # Jumlah tampilan maksimum per kata kunci, 0=tidak terbatas
 
 notification:
-  enable_notification: true # 是否启用通知功能，如果 false，则不发送手机通知
-  message_batch_size: 4000 # 消息分批大小（字节）(这个配置别动)
-  dingtalk_batch_size: 20000 # 钉钉消息分批大小（字节）(这个配置也别动)
-  feishu_batch_size: 30000 # 飞书消息分批大小（字节）
-  bark_batch_size: 4000 # Bark消息分批大小（字节）
-  slack_batch_size: 4000 # Slack消息分批大小（字节）
-  batch_send_interval: 3 # 批次发送间隔（秒）
-  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━" # feishu 消息分割线
+  enable_notification: true # Apakah mengaktifkan notifikasi. Jika false, tidak mengirim notifikasi ponsel
+  message_batch_size: 4000 # Ukuran batch pesan (byte) (Jangan ubah konfigurasi ini)
+  dingtalk_batch_size: 20000 # Ukuran batch pesan DingTalk (byte) (Jangan ubah konfigurasi ini)
+  feishu_batch_size: 30000 # Ukuran batch pesan Feishu (byte)
+  bark_batch_size: 4000 # Ukuran batch pesan Bark (byte)
+  slack_batch_size: 4000 # Ukuran batch pesan Slack (byte)
+  batch_send_interval: 3 # Interval pengiriman batch (detik)
+  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━" # Garis pemisah pesan Feishu
 
-  # 🕐 推送时间窗口控制（可选功能）
-  # 用途：限制推送的时间范围，避免非工作时间打扰
-  # 适用场景：
-  #   - 只想在工作日白天接收推送（如 09:00-18:00）
-  #   - 希望在晚上固定时间收到汇总（如 20:00-22:00）
+  # 🕐 Kontrol Jendela Waktu Push (Fitur Opsional)
+  # Kegunaan: Membatasi rentang waktu push, menghindari gangguan di luar jam kerja
+  # Skenario:
+  #    - Hanya ingin menerima push saat hari kerja (misal 09:00-18:00)
+  #    - Berharap menerima ringkasan pada waktu tetap di malam hari (misal 20:00-22:00)
   push_window:
-    enabled: false  # 是否启用推送时间窗口控制，默认关闭
-    # 注意：GitHub Actions 执行时间不稳定，时间范围建议至少留足 2 小时
-    # 如果想要精准的定时推送，建议使用 Docker 部署在个人服务器上
+    enabled: false  # Apakah mengaktifkan kontrol jendela waktu push, default mati (false)
+    # Catatan: Waktu eksekusi GitHub Actions tidak stabil, rentang waktu disarankan minimal 2 jam
+    # Jika ingin push waktu yang presisi, disarankan menggunakan Docker di server pribadi
     time_range:
-      start: "20:00"  # 推送时间窗口开始（北京时间）
-      end: "22:00"    # 推送时间窗口结束（北京时间）
-    once_per_day: true  # 每天在时间窗口内只推送一次，如果 false，则窗口内每次执行都推送
-    push_record_retention_days: 7  # 推送记录保留天数
+      start: "20:00"  # Awal jendela waktu push (Waktu Beijing/CST)
+      end: "22:00"    # Akhir jendela waktu push (Waktu Beijing/CST)
+    once_per_day: true  # Hanya push sekali sehari dalam jendela waktu. Jika false, push setiap kali dieksekusi dalam jendela
+    push_record_retention_days: 7  # Hari penyimpanan catatan push
 
-  # ⚠️⚠️⚠️ 重要安全警告 / IMPORTANT SECURITY WARNING ⚠️⚠️⚠️
+  # ⚠️⚠️⚠️ PERINGATAN KEAMANAN PENTING / IMPORTANT SECURITY WARNING ⚠️⚠️⚠️
   #
-  # 🔴 请务必妥善保管好 webhooks，不要公开!!!
-  # 🔴 如果你以 fork 的方式将本项目部署在 GitHub 上，请勿在下面填写任何 webhooks
-  # 🔴 而是将 webhooks 填入 GitHub Secret（Settings → Secrets and variables → Actions）
-  # 🔴 否则：
-  #    - 轻则：手机上收到大量垃圾广告推送
-  #    - 重则：webhook 被滥用造成严重安全隐患（如恶意消息轰炸、钓鱼链接等）
+  # 🔴 Harap simpan webhooks dengan aman, JANGAN dipublikasikan!!!
+  # 🔴 Jika Anda men-deploy proyek ini di GitHub via fork, JANGAN isi webhooks di bawah ini
+  # 🔴 Sebaliknya, isi webhooks ke GitHub Secrets (Settings → Secrets and variables → Actions)
+  # 🔴 Jika tidak:
+  #    - Ringan: Ponsel menerima banyak spam iklan
+  #    - Berat: Webhook disalahgunakan menyebabkan risiko keamanan serius (bom pesan berbahaya, link phishing, dll.)
   #
   # 🔴 NEVER expose webhooks publicly!!!
   # 🔴 If deploying via GitHub fork, DO NOT fill webhooks below
@@ -72,50 +72,53 @@ notification:
   #    - Severe: Webhook abuse leading to security incidents (malicious messages, phishing links, etc.)
   #
   webhooks:
-    feishu_url: "" # 飞书机器人的 webhook URL
-    dingtalk_url: "" # 钉钉机器人的 webhook URL
-    wework_url: "" # 企业微信机器人的 webhook URL
-    wework_msg_type: "markdown" # 企业微信消息类型：markdown(群机器人) 或 text(个人微信应用)
-    telegram_bot_token: "" # Telegram Bot Token
-    telegram_chat_id: "" # Telegram Chat ID
-    email_from: "" # 发件人邮箱地址
-    email_password: "" # 发件人邮箱密码或授权码
-    email_to: "" # 收件人邮箱地址，多个收件人用逗号分隔
-    email_smtp_server: "" # SMTP服务器地址（可选，留空自动识别）
-    email_smtp_port: "" # SMTP端口（可选，留空自动识别）
-    ntfy_server_url: "https://ntfy.sh" # ntfy服务器地址，默认使用公共服务，可改为自托管地址
-    ntfy_topic: "" # ntfy主题名称
-    ntfy_token: "" # ntfy访问令牌（可选，用于私有主题）
-    bark_url: "" # Bark推送URL（格式：https://api.day.app/your_device_key 或自建服务器地址）
-    slack_webhook_url: "" # Slack Incoming Webhook URL（格式：https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX）
+    feishu_url: "" # URL Webhook Robot Feishu
+    dingtalk_url: "" # URL Webhook Robot DingTalk
+    wework_url: "" # URL Webhook Robot WeChat Enterprise (WeWork)
+    wework_msg_type: "markdown" # Tipe pesan WeChat Enterprise: markdown (bot grup) atau text (aplikasi personal)
+    telegram_bot_token: "" # Token Bot Telegram
+    telegram_chat_id: "" # Chat ID Telegram
+    email_from: "" # Alamat email pengirim
+    email_password: "" # Password email pengirim atau kode otorisasi (app password)
+    email_to: "" # Alamat email penerima, pisahkan dengan koma untuk banyak penerima
+    email_smtp_server: "" # Alamat server SMTP (opsional, biarkan kosong untuk deteksi otomatis)
+    email_smtp_port: "" # Port SMTP (opsional, biarkan kosong untuk deteksi otomatis)
+    ntfy_server_url: "https://ntfy.sh" # Alamat server ntfy, default layanan publik, bisa diubah ke alamat self-hosted
+    ntfy_topic: "" # Nama topik ntfy
+    ntfy_token: "" # Token akses ntfy (opsional, untuk topik privat)
+    bark_url: "" # URL Push Bark (Format: https://api.day.app/your_device_key atau server mandiri)
+    slack_webhook_url: "" # Slack Incoming Webhook URL (Format: https://hooks.slack.com/services/...)
 
-# 用于让关注度更高的新闻在更前面显示，即用算法重新组合不同平台的热搜排序形成你侧重的热搜，合起来是 1 就行
+# Digunakan agar berita dengan perhatian lebih tinggi tampil lebih awal, 
+# yaitu menggunakan algoritma untuk menggabungkan ulang peringkat pencarian panas dari berbagai platform 
+# untuk membentuk pencarian panas yang Anda fokuskan. Totalnya harus 1.
 weight:
-  rank_weight: 0.6 # 排名权重
-  frequency_weight: 0.3 # 频次权重
-  hotness_weight: 0.1 # 热度权重
+  rank_weight: 0.6 # Bobot Peringkat
+  frequency_weight: 0.3 # Bobot Frekuensi
+  hotness_weight: 0.1 # Bobot Popularitas (Hotness)
 
-# name 可以定义任意名称，只具有显示作用，即使项目运行了几天后，忽然改掉 name 也不会影响代码的正常运行
+# "name" dapat didefinisikan dengan nama apa pun, hanya untuk tampilan. 
+# Meskipun nama diubah setelah proyek berjalan beberapa hari, itu tidak akan mempengaruhi jalannya kode.
 platforms:
   - id: "toutiao"
-    name: "今日头条"
+    name: "Toutiao (Hari Ini)"
   - id: "baidu"
-    name: "百度热搜"
+    name: "Baidu Hot Search"
   - id: "wallstreetcn-hot"
-    name: "华尔街见闻"
+    name: "Wall Street CN"
   - id: "thepaper"
-    name: "澎湃新闻"
+    name: "The Paper"
   - id: "bilibili-hot-search"
-    name: "bilibili 热搜"
+    name: "Bilibili Hot Search"
   - id: "cls-hot"
-    name: "财联社热门"
+    name: "Cailianshe (CLS) Hot"
   - id: "ifeng"
-    name: "凤凰网"
+    name: "Ifeng (Phoenix News)"
   - id: "tieba"
-    name: "贴吧"
+    name: "Tieba"
   - id: "weibo"
-    name: "微博"
+    name: "Weibo"
   - id: "douyin"
-    name: "抖音"
+    name: "Douyin (TikTok CN)"
   - id: "zhihu"
-    name: "知乎"
+    name: "Zhihu"
