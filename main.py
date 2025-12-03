@@ -14,6 +14,7 @@ from email.utils import formataddr, formatdate, make_msgid
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Union
+from deep_translator import GoogleTranslator
 
 import pytz
 import requests
@@ -254,6 +255,21 @@ CONFIG = load_config()
 print(f"TrendRadar v{VERSION} 配置加载完成")
 print(f"监控平台数量: {len(CONFIG['PLATFORMS'])}")
 
+# === Fungsi Tambahan untuk Translate ===
+def translate_to_indo(text):
+    """Menerjemahkan teks Mandarin ke Indonesia dengan error handling"""
+    if not text or not isinstance(text, str):
+        return text
+    try:
+        # Menggunakan Google Translate (gratis & stabil)
+        # source='auto' membiarkan google mendeteksi bahasa (biasanya mandarin)
+        # target='id' adalah kode untuk bahasa Indonesia
+        translated = GoogleTranslator(source='auto', target='id').translate(text)
+        return translated
+    except Exception as e:
+        print(f"Gagal translate '{text[:10]}...': {e}")
+        return text
+# =======================================
 
 # === 工具函数 ===
 def get_beijing_time():
@@ -4738,7 +4754,7 @@ class NewsAnalyzer:
     ) -> Tuple[List[Dict], str]:
         """统一的分析流水线：数据处理 → 统计计算 → HTML生成"""
 
-        # 统计计算
+        # 1. Hitung Statistik (Masih dalam Mandarin)
         stats, total_titles = count_word_frequency(
             data_source,
             word_groups,
@@ -4750,7 +4766,57 @@ class NewsAnalyzer:
             mode=mode,
         )
 
-        # HTML生成
+        # ============================================================
+        # MODIFIKASI: PROSES TERJEMAHAN (MANDARIN -> INDONESIA)
+        # ============================================================
+        print("🔄 Sedang menerjemahkan berita ke Bahasa Indonesia... (Mohon tunggu)")
+
+        # A. Terjemahkan Berita Populer (Stats)
+        for group in stats:
+            for title_data in group["titles"]:
+                original_cn = title_data["title"]
+                try:
+                    # Translate
+                    indo_title = translate_to_indo(original_cn)
+                    # Format ulang: Judul Indo (Judul Asli)
+                    # Agar Anda tetap bisa cross-check jika terjemahan aneh
+                    title_data["title"] = f"{indo_title}\n(Ori: {original_cn})"
+                except Exception as e:
+                    print(f"Skip translate statistic: {e}")
+
+        # B. Terjemahkan Berita Baru (New Titles / Incremental)
+        # Karena new_titles menggunakan Judul sebagai KEY dictionary, kita harus bongkar pasang.
+        if new_titles:
+            translated_new_titles = {}
+            
+            for source_id, titles_dict in new_titles.items():
+                translated_source_titles = {}
+                
+                for cn_title, data in titles_dict.items():
+                    try:
+                        # Translate key (judul)
+                        indo_title = translate_to_indo(cn_title)
+                        combined_title = f"{indo_title}\n(Ori: {cn_title})"
+                        
+                        # Copy data lama agar aman
+                        new_data = data.copy()
+                        # Update field title di dalam data juga
+                        new_data['title'] = combined_title 
+                        
+                        # Simpan ke dictionary baru dengan Key Bahasa Indonesia
+                        translated_source_titles[combined_title] = new_data
+                    except Exception as e:
+                        # Jika gagal, tetap simpan yang asli
+                        translated_source_titles[cn_title] = data
+                        print(f"Skip translate new_title: {e}")
+                
+                translated_new_titles[source_id] = translated_source_titles
+            
+            # Ganti variabel new_titles dengan versi yang sudah diterjemahkan
+            new_titles = translated_new_titles
+        # ============================================================
+
+        # HTML生成 (Sekarang data stats dan new_titles sudah Bahasa Indonesia)
         html_file = generate_html_report(
             stats,
             total_titles,
